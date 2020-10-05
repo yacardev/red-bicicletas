@@ -10,4 +10,15 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     accessToken: accessToken //'yacardev.mapbox.access.token'
 }).addTo(mymap);
 
-L.marker([-34.6070604, -58.4456831]).addTo(mymap);
+//L.marker([-34.6070604, -58.4456831]).addTo(mymap);
+
+$.ajax({
+    dataType: "json",
+    url: "api/bicicletas",
+    success: function(result) {
+        console.log(result);
+        result.bicicletas.forEach(function(bici) {
+            L.marker(bici.ubicacion, { title: bici.id }).addTo(mymap);
+        })
+    }
+})

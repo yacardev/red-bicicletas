@@ -18,8 +18,8 @@ Bicicleta.findById = function(aBiciId) {
     var aBici = Bicicleta.all.find(x => x.id == aBiciId);
     if (aBici)
         return aBici;
-    else
-        throw new Error(`No existe una bicicleta con el id ${aBiciId}`)
+    //else
+    //  throw new Error(`No existe una bicicleta con el id ${aBiciId}`)
 }
 
 Bicicleta.removeById = function(aBiciId) {
