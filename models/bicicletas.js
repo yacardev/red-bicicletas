@@ -10,6 +10,7 @@ Bicicleta.prototype.toString = function() {
 }
 
 Bicicleta.all = [];
+
 Bicicleta.add = function(aBici) {
     Bicicleta.all.push(aBici);
 }
@@ -32,10 +33,10 @@ Bicicleta.removeById = function(aBiciId) {
     }
 }
 
-var a = new Bicicleta(1, 'verde', 'urbana', [-34.6064996, -58.4356329]);
-var b = new Bicicleta(2, 'negro', 'urbana', [-34.6205082, -58.4413379]);
+// var a = new Bicicleta(1, 'verde', 'urbana', [-34.6064996, -58.4356329]);
+// var b = new Bicicleta(2, 'negro', 'urbana', [-34.6205082, -58.4413379]);
 
-Bicicleta.add(a);
-Bicicleta.add(b);
+// Bicicleta.add(a);
+// Bicicleta.add(b);
 
 module.exports = Bicicleta
