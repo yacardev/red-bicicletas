@@ -36,7 +36,7 @@ describe('Testing Bicicleta', () => {
     describe('Bicicleta.createInstance', () => {
         it('crea una instancia de Bicicleta', () => {
 
-            var bici = Bicicleta.createInstance("verde", "urbana", [-34.5, -54.1]);
+            var bici = Bicicleta.createInstance(1, "verde", "urbana", [-34.5, -54.1]);
             //expect(bici.code).toBe(1);
             expect(bici.color).toBe("verde");
             expect(bici.modelo).toBe("urbana");
@@ -58,12 +58,12 @@ describe('Testing Bicicleta', () => {
 
     describe('Bicicleta.add', () => {
         it('agrega solo una bici', (done) => {
-            var aBici = new Bicicleta({ color: "verde", modelo: "vintage" });
+            var aBici = new Bicicleta({ code: 2, color: "verde", modelo: "vintage" });
             Bicicleta.add(aBici, (err, newBici) => {
                 if (err) console.log(err);
                 Bicicleta.allBicis((err, bicis) => {
                     expect(bicis.length).toBe(1);
-                    //expect(bicis[0].code).toEqual(aBici.code);
+                    expect(bicis[0].code).toEqual(aBici.code);
                     console.log('Bicicleta.add() ');
                     done();
                 });

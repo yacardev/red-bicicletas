@@ -10,7 +10,7 @@ exports.bicicleta_create = function(req, res) {
     var body = req.body;
     console.log('body: ', body);
     try {
-        var bici = new Bicicleta(body.color, body.modelo, body.ubicacion);
+        var bici = new Bicicleta({ code: body.code, color: body.color, modelo: body.modelo, ubicacion: body.ubicacion }); //, , 
     } catch {
         console.log('error');
         return res.status(500).json({
