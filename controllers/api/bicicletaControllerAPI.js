@@ -8,19 +8,31 @@ exports.bicicleta_list = function(req, res) {
 
 exports.bicicleta_create = function(req, res) {
     var body = req.body;
-    var bici = new Bicicleta(body.id, body.color, body.modelo);
-    bici.ubicacion = body.ubicacion;
+    console.log('body: ', body);
+    try {
+        var bici = new Bicicleta(body.color, body.modelo, body.ubicacion);
+    } catch {
+        console.log('error');
+        return res.status(500).json({
+            error: 'Error creando bicicleta'
+        });
+    }
+    if (bici) {
+        console.log('bici', bici);
+        Bicicleta.add(bici);
 
-    Bicicleta.add(bici);
-
-    res.status(200).json({
-        bicicleta: bici
-    })
+        res.status(200).json({
+            bicicleta: bici
+        })
+    } else {
+        console.log('error');
+    }
+    //bici.ubicacion = body.ubicacion;
 }
 
 exports.bicicleta_delete = function(req, res) {
     Bicicleta.removeById(req.body.id);
-    res.status(204).send();
+    res.status(200).send();
 }
 
 exports.bicicleta_update = function(req, res) {

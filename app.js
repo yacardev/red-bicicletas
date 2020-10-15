@@ -3,11 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var biciletasRouter = require('./routes/bicicletas');
-var biciletasAPIRouter = require('./routes/api/bicicletas');
+var bicicletasRouter = require('./routes/bicicletas');
+var bicicletasAPIRouter = require('./routes/api/bicicletas');
+var usuariosAPIRouter = require('./routes/api/usuarios');
 
 var app = express();
 
@@ -23,8 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/bicicletas', biciletasRouter);
-app.use('/api/bicicletas', biciletasAPIRouter);
+app.use('/bicicletas', bicicletasRouter);
+app.use('/api/bicicletas', bicicletasAPIRouter);
+app.use('/api/usuarios', usuariosAPIRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -41,5 +44,34 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+//DB
+
+var mongoDB = 'mongodb://localhost:27017/red_bicicletas';
+mongoose.connect(mongoDB, {
+    useFindAndModify: false,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+});
+mongoose.Promise = global.Promise;
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    // estamos conectados!
+    console.log('DB ONLINE');
+});
+/*
+mongoose.connect('mongodb://localhost/TEST', {
+    useFindAndModify: false,
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useUnifiedTopology: true
+}, (err, res) => {
+    if (err) throw err;
+    console.log('DB ONLINE');
+}).catch(err => console.log('Error', err));*/
+
 
 module.exports = app;
