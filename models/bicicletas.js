@@ -38,6 +38,8 @@ bicicletaSchema.statics.findByCode = function(aCode, cb) {
     return this.findOne({ code: aCode }, cb);
 };
 
+
+
 bicicletaSchema.statics.removeByCode = function(aCode, cb) {
     return this.deleteOne({ code: aCode }, cb);
 };
