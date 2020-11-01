@@ -12,3 +12,8 @@ a {
     width: 80%;
     height: 800px;
 }
+
+body {
+    padding: 50px;
+    padding-top: 5rem;
+}

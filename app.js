@@ -3,7 +3,9 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-//const passport = require('./config/passport');
+const passport = require('./config/passport');
+
+const session = require('express-session')
 
 const mongoose = require('mongoose');
 
@@ -15,7 +17,16 @@ var usuariosRouter = require('./routes/usuarios');
 var tokenRouter = require('./routes/token');
 const { appendFileSync } = require('fs');
 
+const store = new session.MemoryStore;
+
 var app = express();
+app.use(session({
+    cookie: { maxAge: 240 * 60 * 60 * 1000 },
+    store: store,
+    saveUninitialized: true,
+    resave: 'true',
+    secret: 'red_bicis_123!!!AAABBBCCC!!&&&'
+}))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,6 +36,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
@@ -33,6 +46,11 @@ app.use('/api/bicicletas', bicicletasAPIRouter);
 app.use('/api/usuarios', usuariosAPIRouter);
 app.use('/usuarios', usuariosRouter);
 app.use('/token', tokenRouter);
+
+
+app.get('/login', function(reg, res) {
+    res.render('session/login');
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
