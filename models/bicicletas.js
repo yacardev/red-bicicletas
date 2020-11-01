@@ -44,6 +44,7 @@ bicicletaSchema.statics.removeByCode = function(aCode, cb) {
     return this.deleteOne({ code: aCode }, cb);
 };
 
+
 module.exports = mongoose.model('Bicicleta', bicicletaSchema);
 
 /*

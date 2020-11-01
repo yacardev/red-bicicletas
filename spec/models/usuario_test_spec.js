@@ -6,7 +6,7 @@ var Bicicleta = require('../../models/bicicletas');
 describe('Testing Usuario', function() {
     beforeAll((done) => {
         console.log('beforeEach');
-        var mongoDB = 'mongodb://localhost:27017/red_bicicletas';
+        var mongoDB = 'mongodb://localhost/red_bicicletas';
         mongoose.connect(mongoDB, {
             useFindAndModify: false,
             useNewUrlParser: true,
@@ -41,7 +41,7 @@ describe('Testing Usuario', function() {
 
     describe('Cuando un usuario reserva una bici', () => {
         it('debe existir la reserva', (done) => {
-            const usuario = new Usuario({ nombre: 'Matias' });
+            const usuario = new Usuario({ nombre: 'Nombre de test', email: 'prueba@hola.com', password: '1234' });
             usuario.save();
             const bicicleta = new Bicicleta({ code: 1, color: 'rojo', model: 'urbana' });
             bicicleta.save();
