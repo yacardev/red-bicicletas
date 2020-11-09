@@ -16,14 +16,14 @@ describe('Testing Usuario', function() {
         });
 
         const db = mongoose.connection;
-        console.log('(1)');
+
         db.on('error', console.error.bind(console, 'connection error:'));
-        console.log('(2)');
         db.once('open', () => {
             // estamos conectados!
-            console.log('DB ONLINE - testing');
+            console.log('DB ONLINE - testing usuarios');
             done();
         });
+
     }); //beforeAll
 
     afterEach((done) => {
@@ -38,6 +38,14 @@ describe('Testing Usuario', function() {
             });
         });
     }); //afterEach
+    /*
+        afterAll((done) => {
+            mongoose.connection.close(function() {
+                console.log('Mongoose disconnected on app termination');
+                //process.exit(0);
+                done();
+            });
+        });*/
 
     describe('Cuando un usuario reserva una bici', () => {
         it('debe existir la reserva', (done) => {

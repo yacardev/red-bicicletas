@@ -2,6 +2,7 @@ var Bicicleta = require('../../models/bicicletas');
 var request = require('request');
 var server = require('../../bin/www');
 
+
 describe('Testing api bicicletas', () => {
     /*
     beforeEach(() => {

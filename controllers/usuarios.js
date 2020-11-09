@@ -51,4 +51,12 @@ module.exports = {
                 res.redirect('/usuarios');
         });
     },
+    resetPassword: function(req, res, next) {
+        Usuario.findOne({ email: req.body.email }, function(err, usuario) {
+            if (err)
+                next(err)
+            else
+                usuario.enviar_mail_resetPassword();
+        });
+    },
 }

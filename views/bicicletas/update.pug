@@ -10,7 +10,7 @@ block content
 
     form(action=`/bicicletas/${bici.id}/update`, method='post')
         laber(for='id') ID:
-        input#id(type='text', name='id' value=bici.id)
+        input#id(type='hidden', name='id' value=bici.id)
         br
         laber(for='color') Color:
         input#color(type='text', name='color' value=bici.color)

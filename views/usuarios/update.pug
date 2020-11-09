@@ -11,14 +11,14 @@ block content
     form(action=`/usuarios/${usuario.id}/update`, method='post')
      .form-group
       label(for='nombre') Nombre:
-      input#nombre.form-control(type='text', name='nombre' value=usuario.nombre class=error.nombre ? 'is-invalid': '')
+      input#nombre.form-control(type='text', name='nombre' value=usuario.nombre class=errors.nombre ? 'is-invalid': '')
       if errors.nombre 
        small#nombreHelp.text-danger
-        = error.nombre.message
+        = errors.nombre.message
       br
       br
       input.btn.btn-primary(type='submit' value='OK')
       br
       br
-    a(href='/bicicletas') Volver
+    a(href='/usuarios') Volver
         

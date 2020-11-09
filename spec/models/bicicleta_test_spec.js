@@ -6,6 +6,7 @@ describe('Testing Bicicleta', () => {
     beforeAll((done) => {
         console.log('beforeEach');
         var mongoDB = 'mongodb://localhost:27017/red_bicicletas';
+
         mongoose.connect(mongoDB, {
             useFindAndModify: false,
             useNewUrlParser: true,
@@ -15,14 +16,14 @@ describe('Testing Bicicleta', () => {
         });
 
         const db = mongoose.connection;
-        console.log('(1)');
+
         db.on('error', console.error.bind(console, 'connection error:'));
-        console.log('(2)');
         db.once('open', () => {
             // estamos conectados!
-            console.log('DB ONLINE - testing');
+            console.log('DB ONLINE - testing bicicletas');
             done();
         });
+
     });
 
     afterEach((done) => {
@@ -32,6 +33,15 @@ describe('Testing Bicicleta', () => {
             done();
         });
     });
+    /*
+        afterAll((done) => {
+            console.log('close DB connection()');
+            mongoose.connection.close(function() {
+                console.log('Mongoose disconnected on app termination');
+                done();
+            });
+
+        });*/
 
     describe('Bicicleta.createInstance', () => {
         it('crea una instancia de Bicicleta', () => {

@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const passport = require('./config/passport');
+var Usuario = require('./models/usuarios');
+var Token = require('./models/token');
 
 const session = require('express-session')
 
@@ -16,6 +18,7 @@ var usuariosAPIRouter = require('./routes/api/usuarios');
 var usuariosRouter = require('./routes/usuarios');
 var tokenRouter = require('./routes/token');
 const { appendFileSync } = require('fs');
+const { token } = require('morgan');
 
 const store = new session.MemoryStore;
 
@@ -35,22 +38,95 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/bicicletas', bicicletasRouter);
-app.use('/api/bicicletas', bicicletasAPIRouter);
-app.use('/api/usuarios', usuariosAPIRouter);
-app.use('/usuarios', usuariosRouter);
+app.use('/bicicletas', loggedIn, bicicletasRouter);
+app.use('/usuarios', loggedIn, usuariosRouter);
+
 app.use('/token', tokenRouter);
 
+//APIs:
+app.use('/api/bicicletas', bicicletasAPIRouter);
+app.use('/api/usuarios', usuariosAPIRouter);
 
-app.get('/login', function(reg, res) {
-    res.render('session/login');
-})
+
+app.get('/login', (req, res) => {
+    res.render('session/login', { errors: {} });
+});
+
+app.post('/login', (req, res, next) => {
+    passport.authenticate('local', (err, usuario, info) => {
+        //console.log('info: ', info)
+        if (err) { console.log(err); return next(err) };
+        if (!usuario) { console.log('no encontro usuario'); return res.render('session/login', { errors: info }) };
+        req.login(usuario, (err) => {
+            //console.log(err)
+            if (err) return next(err);
+            return res.redirect('/');
+        });
+    })(req, res, next);
+});
+
+app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
+
+app.get('/forgotPassword', (req, res) => {
+    res.render('usuarios/forgotPassword', { message: { desc: '*Se enviara un link de validacion a la direccion de correo' } });
+});
+
+app.post('/forgotPassword', (req, res, next) => {
+    Usuario.findOne({ email: req.body.email }, function(err, usuario) {
+        if (!usuario) return res.render('usuarios/forgotPassword', { message: { error: '*El email ingresado no está asociado a una cuenta' } });
+        usuario.verificado = false;
+        usuario.enviar_mail_resetPassword();
+        usuario.save(function(err) {
+            if (err) return res.status(400).send({ type: 'not-verified', msg: 'Error inesperado' });
+        });
+
+        res.render('usuarios/forgotPassword', { message: { mail_ok: true, desc: '*Se envio el email. Verificar su casilla de correo' } });
+
+    });
+
+
+});
+
+app.get('/token/resetPassword/:token', (req, res, next) => {
+    Token.findOne({ token: req.params.token }, function(err, token) {
+        if (!token) return res.status(400).send({ type: 'not-verified', msg: 'Link de verificacion invalido. Reintentar' });
+        Usuario.findById(token._userId, function(err, usuario) {
+            if (!usuario) return res.status(400).send({ type: 'not-verified', msg: 'No se encontro el usuario asociado' });
+
+            res.render('usuarios/resetPassword', { message: { errors: {}, usuario } });
+        })
+
+    });
+});
+
+app.post('/resetPassword', (req, res) => {
+    if (req.body.password != req.body.confirm_password) {
+        res.render('usuarios/resetPassword', { message: { error: 'No coinciden los valores ingresados', usuario: { email: req.body.email } } })
+        return;
+    }
+
+    Usuario.findOne({ email: req.body.email }, function(err, usuario) {
+        usuario.password = req.body.password;
+        usuario.verificado = true;
+        usuario.save(function(err) {
+            if (err) return res.status(400).send({ type: 'not-verified', msg: 'Error inesperado' });
+            res.render('session/login', { errors: {} });
+        });
+    })
+});
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -85,16 +161,15 @@ db.once('open', function() {
     // estamos conectados!
     console.log('DB ONLINE');
 });
-/*
-mongoose.connect('mongodb://localhost/TEST', {
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true
-}, (err, res) => {
-    if (err) throw err;
-    console.log('DB ONLINE');
-}).catch(err => console.log('Error', err));*/
+
+function loggedIn(req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        console.log('user sin loguarse');
+        res.render('session/login', { errors: {} });
+    }
+};
 
 
 module.exports = app;
