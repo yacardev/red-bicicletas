@@ -96,7 +96,7 @@ usuarioSchema.methods.enviar_mail_resetPassword = function(cb) {
             from: 'no-reply@redbicicletas.com',
             to: email_destination,
             subject: 'Verificacion de Password',
-            text: `Hola, \n\n Por favor, para regenerar su password haga click en este link: \n http://localhost:3000\/token/resetPassword\/${token.token}\n`
+            text: `Hola, \n\n Por favor, para regenerar su password haga click en este link: \n http://localhost:3000\/token/resetpassword\/${token.token}\n`
         };
 
         mailer.sendMail(mailOptions, function(err) {

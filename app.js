@@ -6,6 +6,7 @@ var logger = require('morgan');
 const passport = require('./config/passport');
 var Usuario = require('./models/usuarios');
 var Token = require('./models/token');
+var jwt = require('jsonwebtoken');
 
 const session = require('express-session')
 
@@ -13,10 +14,14 @@ const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var bicicletasRouter = require('./routes/bicicletas');
-var bicicletasAPIRouter = require('./routes/api/bicicletas');
-var usuariosAPIRouter = require('./routes/api/usuarios');
 var usuariosRouter = require('./routes/usuarios');
 var tokenRouter = require('./routes/token');
+
+//API
+var bicicletasAPIRouter = require('./routes/api/bicicletas');
+var usuariosAPIRouter = require('./routes/api/usuarios');
+var authAPIRouter = require('./routes/api/auth');
+
 const { appendFileSync } = require('fs');
 const { token } = require('morgan');
 
@@ -30,6 +35,8 @@ app.use(session({
     resave: 'true',
     secret: 'red_bicis_123!!!AAABBBCCC!!&&&'
 }))
+
+app.set('secretKey', 'jwt____secret!#!"$#!$FDSFA'); // jwt secret token
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -51,9 +58,12 @@ app.use('/usuarios', loggedIn, usuariosRouter);
 
 app.use('/token', tokenRouter);
 
+
+
 //APIs:
-app.use('/api/bicicletas', bicicletasAPIRouter);
+app.use('/api/bicicletas', validateUser, bicicletasAPIRouter);
 app.use('/api/usuarios', usuariosAPIRouter);
+app.use('/api/auth', authAPIRouter);
 
 
 app.get('/login', (req, res) => {
@@ -169,6 +179,21 @@ function loggedIn(req, res, next) {
         console.log('user sin loguarse');
         res.render('session/login', { errors: {} });
     }
+};
+
+
+
+function validateUser(req, res, next) {
+    jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), function(err, decode) {
+        if (err) {
+            res.json({ status: "error", message: err.message, data: null });
+        } else {
+            // add user id to request
+            //console.log('jwt verified', decode)
+            req.body.userId = decode.id;
+            next();
+        }
+    });
 };
 
 
