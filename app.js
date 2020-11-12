@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -156,7 +158,7 @@ app.use(function(err, req, res, next) {
 
 //DB
 
-var mongoDB = 'mongodb://localhost:27017/red_bicicletas';
+var mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB, {
     useFindAndModify: false,
     useNewUrlParser: true,
