@@ -56,7 +56,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/bicicletas', loggedIn, bicicletasRouter);
-app.use('/usuarios', loggedIn, usuariosRouter);
+app.use('/usuarios', usuariosRouter);
 
 app.use('/token', tokenRouter);
 

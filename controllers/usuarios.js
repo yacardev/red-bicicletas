@@ -29,16 +29,16 @@ module.exports = {
     },
     create: function(req, res, next) {
         if (req.body.password != req.body.confirm_password) {
-            res.render('usuarios/create', { errors: { confirm_password: { message: 'Verificar login' } }, usuario: new Usuario({ nombre: req.body.nombre, email: req.body.email }) });
+            res.render('usuarios/create', { errors: { confirm_password: { message: 'No coincide la contraseña ingresada' } }, usuario: new Usuario({ nombre: req.body.nombre, email: req.body.email }) });
             return;
         }
         console.log('create user(2)');
         Usuario.create({ nombre: req.body.nombre, email: req.body.email, password: req.body.password }, function(err, nuevoUsuario) {
             if (err) {
-                res.render('usuarios/create', { errors: err.errors, usuario: new Usuario({ nombre: req.body.nombre, email: req.body.email }) });
+                res.render('usuarios/create', { message: false, errors: err.errors, usuario: new Usuario({ nombre: req.body.nombre, email: req.body.email }) });
             } else {
                 nuevoUsuario.enviar_mail_bienvenida();
-                res.redirect('/usuarios');
+                res.render('usuarios/create', { message: "Se envio un mail de validacion. Verificar. ", errors: {}, usuario: {} });
             }
 
         });

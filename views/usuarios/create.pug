@@ -3,12 +3,14 @@ extends ../layout
 block content  
     br
 
-    h1 Nuevo Usuario
+    if !message
+     h1 Nuevo Usuario
     
-    br
-    br
+     br
+     br
 
-    form(action='/usuarios/create', method='post')
+    
+     form(action='/usuarios/create', method='post')
       .form-group
         label(for='nombre') Nombre:
         input#nombre.form-control(type='text', name='nombre' value=usuario.nombre class=errors.nombre ? 'is-invalid': '')
@@ -34,11 +36,15 @@ block content
         if errors.confirm_password
          small#confirm_passwordHelp.text-danger
           = errors.confirm_password.message  
-      
       br
       br
       
       input.btn.btn-primary(type='submit' value='OK')          
-        
-    a(href='/usuarios') Volver
+
+    if message != null 
+      p.text-center
+        = message
+        a(href='/usuarios') Login  
+
+    //a(href='/usuarios') Volver
         
