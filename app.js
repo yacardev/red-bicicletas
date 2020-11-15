@@ -72,6 +72,10 @@ app.get('/login', (req, res) => {
     res.render('session/login', { errors: {} });
 });
 
+app.get('/privacy_policy', (req, res) => {
+    res.sendFile('/public/privacy_policy.html');
+});
+
 app.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, usuario, info) => {
         //console.log('info: ', info)
