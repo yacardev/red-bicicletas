@@ -5,6 +5,7 @@ var crypto = require('crypto');
 var Token = require('./token');
 var mailer = require('../mailer/mailer');
 const uniqueValidator = require('mongoose-unique-validator');
+const { callbackPromise } = require('nodemailer/lib/shared');
 var Schema = mongoose.Schema;
 
 const saltRounds = 10;
@@ -71,7 +72,7 @@ usuarioSchema.methods.enviar_mail_bienvenida = function(cb) {
         if (err) { return console.log(err.message); }
 
         const mailOptions = {
-            from: 'no-reply@redbicicletas.com',
+            from: process.env.email_from,
             to: email_destination,
             subject: 'Verificacion de cuenta',
             text: `Hola, \n\n Por favor, para verificar su cuenta haga click en este link: \n http://localhost:3000\/token/confirmation\/${token.token}\n`
@@ -93,7 +94,7 @@ usuarioSchema.methods.enviar_mail_resetPassword = function(cb) {
         if (err) { return console.log(err.message); }
 
         const mailOptions = {
-            from: 'no-reply@redbicicletas.com',
+            from: process.env.email_from,
             to: email_destination,
             subject: 'Verificacion de Password',
             text: `Hola, \n\n Por favor, para regenerar su password haga click en este link: \n http://localhost:3000\/token/resetpassword\/${token.token}\n`
@@ -110,5 +111,32 @@ usuarioSchema.methods.enviar_mail_resetPassword = function(cb) {
 usuarioSchema.methods.resetPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 }
+
+usuarioSchema.statics.findOneOrCreateByGoogle = function findOneOrCreate(condition, callback) {
+    const self = this;
+    console.log('condition', condition);
+    self.findOne({
+        $or: [{ 'googleId': condition.id }, { 'email': condition.emails[0].value }]
+    }, (err, result) => {
+        if (result) {
+            callback(err, result)
+        } else {
+            console.log('--------- Condition ----------');
+            console.log(condition);
+            let values = {};
+            values.googleId = condition.id;
+            values.email = condition.emails[0].value;
+            values.nombre = condition.displayName || 'sin nombre';
+            values.verificado = true;
+            values.password = crypto.randomBytes(16).toString('hex');
+            console.log('--------- Values ----------');
+            console.log(values);
+            self.create(values, (err, result) => {
+                if (err) { console.log(err) }
+                return callback(err, result)
+            })
+        }
+    })
+};
 
 module.exports = mongoose.model('Usuario', usuarioSchema);

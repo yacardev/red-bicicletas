@@ -47,5 +47,11 @@ head
           = errors.mensaje
     .clearfix
       a.float-right(href='/forgotPassword') Recuperar Password
+  
+  form(action='/auth/google' method='get')
+   .form-group
+      button.btn.btn-primary.btn-block(type='submit') Sign up using Google
+  
+  br
   p.text-center
     a(href='/usuarios/create') Create an Account

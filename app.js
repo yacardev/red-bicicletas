@@ -6,11 +6,16 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const passport = require('./config/passport');
+const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
+var etag = require('etag');
+
 var Usuario = require('./models/usuarios');
 var Token = require('./models/token');
 var jwt = require('jsonwebtoken');
 
-const session = require('express-session')
+
+
 
 const mongoose = require('mongoose');
 
@@ -26,8 +31,23 @@ var authAPIRouter = require('./routes/api/auth');
 
 const { appendFileSync } = require('fs');
 const { token } = require('morgan');
+const { assert } = require('console');
 
-const store = new session.MemoryStore;
+let store;
+if (process.env.NODE_ENV === 'DEV') {
+    store = new session.MemoryStore;
+} else {
+    store = new session.MongoDBStore({
+        uri: process.env.MONGO_URI,
+        collection: 'sessions'
+    });
+    store.on('error', function(error) {
+        assert.ifError(error);
+        assert.ok(false);
+    });
+}
+
+
 
 var app = express();
 app.use(session({
@@ -92,6 +112,16 @@ app.post('/login', (req, res, next) => {
         });
     })(req, res, next);
 });
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/error' }),
+    function(req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/');
+    });
 
 app.get('/logout', (req, res) => {
     req.logout();
@@ -205,6 +235,5 @@ function validateUser(req, res, next) {
         }
     });
 };
-
 
 module.exports = app;
