@@ -72,10 +72,10 @@ usuarioSchema.methods.enviar_mail_bienvenida = function(cb) {
         if (err) { return console.log(err.message); }
 
         const mailOptions = {
-            from: process.env.email_from,
+            from: process.env.EMAIL_FROM,
             to: email_destination,
             subject: 'Verificacion de cuenta',
-            text: `Hola, \n\n Por favor, para verificar su cuenta haga click en este link: \n http://localhost:3000\/token/confirmation\/${token.token}\n`
+            text: `Hola, \n\n Por favor, para verificar su cuenta haga click en este link: \n ${process.env.HOST}\/token/confirmation\/${token.token}\n`
         };
 
         mailer.sendMail(mailOptions, function(err) {
@@ -94,10 +94,10 @@ usuarioSchema.methods.enviar_mail_resetPassword = function(cb) {
         if (err) { return console.log(err.message); }
 
         const mailOptions = {
-            from: process.env.email_from,
+            from: process.env.EMAIL_FROM,
             to: email_destination,
-            subject: 'Verificacion de Password',
-            text: `Hola, \n\n Por favor, para regenerar su password haga click en este link: \n http://localhost:3000\/token/resetpassword\/${token.token}\n`
+            subject: 'Verificacion de Password', //process.env.HOST
+            text: `Hola, \n\n Por favor, para regenerar su password haga click en este link: \n ${process.env.HOST}\/token/resetpassword\/${token.token}\n`
         };
 
         mailer.sendMail(mailOptions, function(err) {

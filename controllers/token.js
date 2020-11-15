@@ -13,7 +13,7 @@ module.exports = {
                 usuario.verificado = true;
                 usuario.save(function(err) {
                     if (err) { return res.status(500).send({ msg: err.message }); }
-                    res.redirect('/');
+                    res.redirect('/login');
                 });
 
             });
