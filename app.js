@@ -76,6 +76,10 @@ app.get('/privacy_policy', (req, res) => {
     res.sendFile('/public/privacy_policy.html');
 });
 
+app.get('/googled0bb4996d38c28f1', (req, res) => {
+    res.sendFile('/public/googled0bb4996d38c28f1.html');
+});
+
 app.post('/login', (req, res, next) => {
     passport.authenticate('local', (err, usuario, info) => {
         //console.log('info: ', info)
