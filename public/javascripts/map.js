@@ -16,7 +16,7 @@ $.ajax({
     dataType: "json",
     url: "api/bicicletas",
     success: function(result) {
-        console.log(result);
+        console.log('result mapa', result);
         result.bicicletas.forEach(function(bici) {
             L.marker(bici.ubicacion, { title: bici.id }).addTo(mymap);
         })
