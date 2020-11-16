@@ -1,3 +1,4 @@
+require('newrelic');
 require('dotenv').config();
 
 var createError = require('http-errors');
@@ -8,7 +9,7 @@ var logger = require('morgan');
 const passport = require('./config/passport');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-var etag = require('etag');
+
 
 var Usuario = require('./models/usuarios');
 var Token = require('./models/token');
