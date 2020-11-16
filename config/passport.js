@@ -2,6 +2,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const Usuario = require('../models/usuarios');
 const GoogleStrategy = require('passport-google-oauth20');
+const FacebookTokenStrategy = require('passport-facebook-token');
 
 const msgError = 'Error. Verificar Credenciales';
 passport.use(new LocalStrategy({
@@ -28,6 +29,7 @@ passport.use(new LocalStrategy({
     }
 ));
 
+//Google
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -37,7 +39,24 @@ passport.use(new GoogleStrategy({
     Usuario.findOneOrCreateByGoogle(profile, (err, user) => {
         return cb(err, user);
     })
-}))
+}));
+
+//Facebook
+passport.use(new FacebookTokenStrategy({
+    clientID: process.env.FACEBOOK_CLIENT_ID,
+    clientSecret: process.env.FACEBOOK_CLIENT_SECRET
+}, function(accessToken, refreshToken, profile, done) {
+    console.log('profile', profile);
+    try {
+        Usuario.findOneOrCreateByFacebook(profile, (err, user) => {
+            if (err) console.log('error find/create facebook', err);
+            return done(err, user);
+        });
+    } catch (err2) {
+        console.log(err2);
+        return done(err2, null);
+    }
+}));
 
 
 passport.serializeUser(function(usuario, cb) {

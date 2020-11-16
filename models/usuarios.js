@@ -39,7 +39,9 @@ var usuarioSchema = new Schema({
     verificado: {
         type: Boolean,
         default: false
-    }
+    },
+    googleId: String,
+    facebookId: String
 });
 
 
@@ -112,6 +114,7 @@ usuarioSchema.methods.resetPassword = function(password) {
     return bcrypt.compareSync(password, this.password);
 }
 
+//Google
 usuarioSchema.statics.findOneOrCreateByGoogle = function findOneOrCreate(condition, callback) {
     const self = this;
     console.log('condition', condition);
@@ -125,6 +128,34 @@ usuarioSchema.statics.findOneOrCreateByGoogle = function findOneOrCreate(conditi
             console.log(condition);
             let values = {};
             values.googleId = condition.id;
+            values.email = condition.emails[0].value;
+            values.nombre = condition.displayName || 'sin nombre';
+            values.verificado = true;
+            values.password = crypto.randomBytes(16).toString('hex');
+            console.log('--------- Values ----------');
+            console.log(values);
+            self.create(values, (err, result) => {
+                if (err) { console.log(err) }
+                return callback(err, result)
+            })
+        }
+    })
+};
+
+//Facebook
+usuarioSchema.statics.findOneOrCreateByFacebook = function findOneOrCreate(condition, callback) {
+    const self = this;
+    console.log('condition', condition);
+    self.findOne({
+        $or: [{ 'facebookId': condition.id }, { 'email': condition.emails[0].value }]
+    }, (err, result) => {
+        if (result) {
+            callback(err, result)
+        } else {
+            console.log('--------- Condition ----------');
+            console.log(condition);
+            let values = {};
+            values.facebookId = condition.id;
             values.email = condition.emails[0].value;
             values.nombre = condition.displayName || 'sin nombre';
             values.verificado = true;
