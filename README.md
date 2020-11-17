@@ -24,3 +24,6 @@ FACEBOOK_CLIENT_SECRET = 'facebook client secret'
 
 ## Link Heroku:
 https://yacardev-red-bicicletas.herokuapp.com
+
+## Usuario lectura MongoDB atlas Produccion para visualizar en compass:
+mongodb+srv://ReadOnlyMongoDB:readonly@yacardev.3agn0.mongodb.net/red-bicicletas
